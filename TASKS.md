@@ -7,6 +7,7 @@ In-flight and backlog items for this repo.
 ## In Progress
 
 
+
 <!-- Add items here when you start working on them -->
 
 ---
@@ -34,6 +35,8 @@ In-flight and backlog items for this repo.
 ---
 
 ## Done
+
+- [x] Added the reviewed immutable AI SDLC Skill v0.5.2 source link while preserving repository checks and authorization. Adoption evidence is recorded in its pull request.
 
 - [x] Aligned the README reviewer path, setup commands, related writing, and contribution links; verified relative links, privacy checks, Ruff, 64 tests, and six deterministic evaluation cases.
 
