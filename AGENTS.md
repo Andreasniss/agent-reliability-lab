@@ -50,6 +50,14 @@ Task state lives in `TASKS.md`.
 9. The local policy remains clearly labelled as fictional/synthetic.
 10. Do not describe deterministic component checks as model-quality evaluation.
 
+## Delivery workflow
+
+For implementation and review work, explicitly load [AI SDLC Skill v0.5.2](https://github.com/Andreasniss/ai-sdlc-skill/blob/d7d2345d848f032abe58c14086ded050cba81ea1/skills/ai-sdlc-skill/SKILL.md)
+and its relevant references. This is a reviewed immutable source pin, not a
+claim of native installation or automatic discovery. Preserve this repository's
+invariants, task tracking, privacy checks, CI and existing authorization. Review
+upstream changes before updating the pin.
+
 ## Development workflow
 
 ```bash
