@@ -8,6 +8,7 @@ In-flight and backlog items for this repo.
 
 
 
+
 <!-- Add items here when you start working on them -->
 
 ---
@@ -35,6 +36,8 @@ In-flight and backlog items for this repo.
 ---
 
 ## Done
+
+- [x] Upgraded locked urllib3 from 2.7.0 to 2.8.0 to address the dependency-audit findings; verification and release evidence are recorded in the adoption pull request.
 
 - [x] Added the reviewed immutable AI SDLC Skill v0.5.2 source link while preserving repository checks and authorization. Adoption evidence is recorded in its pull request.
 
