@@ -52,7 +52,7 @@ Task state lives in `TASKS.md`.
 
 ## Delivery workflow
 
-For implementation and review work, explicitly load [AI SDLC Skill v0.5.2](https://github.com/Andreasniss/ai-sdlc-skill/blob/d7d2345d848f032abe58c14086ded050cba81ea1/skills/ai-sdlc-skill/SKILL.md)
+For implementation and review work, explicitly load [AI SDLC Skill v0.5.2](https://github.com/Andreasniss/ai-sdlc-skill/blob/06581dab44162674234f2150a6e7120cc3f17eb7/skills/ai-sdlc-skill/SKILL.md)
 and its relevant references. This is a reviewed immutable source pin, not a
 claim of native installation or automatic discovery. Preserve this repository's
 invariants, task tracking, privacy checks, CI and existing authorization. Review
