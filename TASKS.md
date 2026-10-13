@@ -37,6 +37,8 @@ In-flight and backlog items for this repo.
 
 ## Done
 
+- [x] Refreshed the reviewed immutable AI SDLC Skill v0.5.2 source pin to `06581dab44162674234f2150a6e7120cc3f17eb7`; the canonical skill bundle is unchanged, and verification is recorded in pull request #14.
+
 - [x] Upgraded locked urllib3 from 2.7.0 to 2.8.0 to address the dependency-audit findings; verification and release evidence are recorded in the adoption pull request.
 
 - [x] Added the reviewed immutable AI SDLC Skill v0.5.2 source link while preserving repository checks and authorization. Adoption evidence is recorded in its pull request.
