@@ -67,30 +67,21 @@ uv run pytest -q
 uv run python -m evals.run_evals
 uv export --locked --no-dev --no-hashes --output-file /tmp/audit-requirements.txt
 uv run pip-audit --requirement /tmp/audit-requirements.txt --strict
-uv run streamlit run demo_streamlit.py
 ```
+
+For an optional interactive preview, follow [README](README.md#try-the-credential-free-preview).
+The long-running preview server is not an automated verification gate.
 
 CI uses the committed `uv.lock`. Update it with `uv lock` whenever dependencies
 change. `requirements.txt` remains as a simple pip-compatible entry point.
 
-## Supported configuration
+## Configuration and guide ownership
 
-| Variable | Default | Purpose |
-|---|---|---|
-| `LLM_BACKEND` | `api` | `api` for Mistral or `local` for Ollama |
-| `MISTRAL_API_KEY` | — | Required only for connected Mistral mode |
-| `MISTRAL_MODEL` | backend-dependent | Cloud or local model name |
-| `MISTRAL_MAX_TOKENS` | `1024` | Maximum generated tokens |
-| `MISTRAL_TEMPERATURE` | `0.0` | Sampling temperature |
-| `MISTRAL_TOP_P` | unset | Optional nucleus sampling; avoid combining with temperature |
-| `REQUEST_TIMEOUT` | `30` | Local-provider request timeout in seconds |
-| `RETRY_MAX_ATTEMPTS` | `3` | Total attempts, including the first |
-| `RETRY_BASE_DELAY` | `0.5` | Initial retry delay in seconds |
-| `RETRY_MAX_DELAY` | `60.0` | Maximum retry delay in seconds |
-| `MAX_TOOL_ROUNDS` | `4` | Maximum model/tool cycles per request |
-| `OTEL_ENABLED` | `false` | Opt in to trace export |
-| `OTEL_EXPORTER_OTLP_ENDPOINT` | `http://localhost:4317` | OTLP/gRPC endpoint |
-| `API_KEY` | — | Protects local FastAPI model endpoints |
+[README configuration](README.md#configuration) owns the contributor reference;
+`config.py` owns executable defaults and validation. Change the reference when
+changing that contract rather than keeping a second table here. For guide changes,
+use the [shared standard](https://github.com/Andreasniss/ai-sdlc-skill/blob/316d33686aa9bd89324078ed02cc0d2e4bcc87b2/CONTRIBUTING.md#maintain-guides)
+while preserving this repository's task tracking and verification requirements.
 
 ## Extension rules
 
