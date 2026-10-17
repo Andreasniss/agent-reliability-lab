@@ -80,7 +80,7 @@ change. `requirements.txt` remains as a simple pip-compatible entry point.
 [README configuration](README.md#configuration) owns the contributor reference;
 `config.py` owns executable defaults and validation. Change the reference when
 changing that contract rather than keeping a second table here. For guide changes,
-use the [shared standard](https://github.com/Andreasniss/ai-sdlc-skill/blob/main/CONTRIBUTING.md#maintain-guides)
+use the [shared standard](https://github.com/Andreasniss/ai-sdlc-skill/blob/316d33686aa9bd89324078ed02cc0d2e4bcc87b2/CONTRIBUTING.md#maintain-guides)
 while preserving this repository's task tracking and verification requirements.
 
 ## Extension rules

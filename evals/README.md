@@ -12,4 +12,4 @@ This is deliberately not presented as a model-quality benchmark. A production
 extension should add versioned provider runs, human-reviewed labels, failure
 taxonomy, and cost/latency thresholds.
 
-Use the root [setup instructions](../README.md#try-the-credential-free-preview) and locked environment before running this command. The evaluation covers the deterministic preview contract, not connected model quality.
+From the repository root, run `uv sync --locked --dev` before this command. No preview server is needed. The evaluation covers the deterministic preview contract, not connected model quality.
