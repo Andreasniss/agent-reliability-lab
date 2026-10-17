@@ -9,6 +9,7 @@ In-flight and backlog items for this repo.
 
 
 
+
 <!-- Add items here when you start working on them -->
 
 ---
@@ -36,6 +37,8 @@ In-flight and backlog items for this repo.
 ---
 
 ## Done
+
+- [x] Consolidated guide ownership and configuration, corrected current repository links and separated preview from verification. Local link checks, Ruff, 64 tests and six deterministic evaluation cases passed; PR records the reviewed revision.
 
 - [x] Refreshed the reviewed immutable AI SDLC Skill v0.5.2 source pin to `06581dab44162674234f2150a6e7120cc3f17eb7`; the canonical skill bundle is unchanged, and verification is recorded in pull request #14.
 

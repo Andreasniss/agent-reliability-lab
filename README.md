@@ -1,8 +1,8 @@
 # Agent Reliability Lab
 
-[Built by Andreas Nissen](https://github.com/Andreasniss) · [AndreasNissen.dev](https://andreasnissen.dev) · [Connect on LinkedIn](https://www.linkedin.com/in/andreasnissen) · [Source on GitHub](https://github.com/Andreasniss/Mistral-playground) · [Apache-2.0](LICENSE)
+[Built by Andreas Nissen](https://github.com/Andreasniss) · [AndreasNissen.dev](https://andreasnissen.dev) · [Connect on LinkedIn](https://www.linkedin.com/in/andreasnissen) · [Source on GitHub](https://github.com/Andreasniss/agent-reliability-lab) · [Apache-2.0](LICENSE)
 
-[![CI](https://github.com/Andreasniss/Mistral-playground/actions/workflows/ci.yml/badge.svg)](https://github.com/Andreasniss/Mistral-playground/actions/workflows/ci.yml)
+[![CI](https://github.com/Andreasniss/agent-reliability-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/Andreasniss/agent-reliability-lab/actions/workflows/ci.yml)
 [![Python 3.12](https://img.shields.io/badge/python-3.12-3776AB.svg)](https://www.python.org/)
 
 A compact reference for building inspectable, tool-using AI with Mistral or local
@@ -15,8 +15,7 @@ credential-free tests, and a deterministic evaluation contract.
 
 Start with the [credential-free preview](#try-the-credential-free-preview), or read the
 [project walkthrough](https://andreasnissen.dev/projects/mistral-playground/) for the
-reviewer path and trust boundaries. The repository slug `Mistral-playground` is
-retained; the project is named **Agent Reliability Lab**.
+reviewer path and trust boundaries. The repository is **agent-reliability-lab**; older walkthrough URLs retain the former project slug.
 
 **Verified 31 August 2026:** Ruff passes, 26 credential-free tests pass, all 6 deterministic evaluation cases pass, and the locked runtime dependency audit reports no known vulnerabilities.
 
@@ -39,8 +38,8 @@ Prerequisites: Git, Python 3.12 or later, and
 The lockfile selects the reviewed dependencies. Initial setup time depends on downloads.
 
 ```bash
-git clone https://github.com/Andreasniss/Mistral-playground.git
-cd Mistral-playground
+git clone https://github.com/Andreasniss/agent-reliability-lab.git
+cd agent-reliability-lab
 uv sync --locked --dev
 uv run streamlit run demo_streamlit.py
 ```
@@ -145,13 +144,23 @@ an `X-API-Key` matching `API_KEY` in `.env`; `/health` is unauthenticated.
 | Variable | Default | Purpose |
 |---|---|---|
 | `LLM_BACKEND` | `api` | `api` for Mistral or `local` for Ollama |
-| `MISTRAL_MODEL` | `mistral-large-latest` | Provider model or Ollama model name |
+| `MISTRAL_API_KEY` | — | Required only for connected Mistral mode |
+| `MISTRAL_MODEL` | `mistral-large-latest` (API), `mistral` (local) | Cloud or local model name |
 | `MISTRAL_MAX_TOKENS` | `1024` | Maximum generated tokens |
-| `MISTRAL_TEMPERATURE` | `0.0` | Deterministic-by-default sampling |
-| `RETRY_MAX_ATTEMPTS` | `3` | Total attempts, including the first |
-| `MAX_TOOL_ROUNDS` | `4` | Prevents unbounded model/tool loops |
+| `MISTRAL_TEMPERATURE` | `0.0` | Sampling temperature |
+| `MISTRAL_TOP_P` | unset | Optional nucleus sampling; avoid combining with temperature |
 | `REQUEST_TIMEOUT` | `30` | Local-provider request timeout in seconds |
-| `OTEL_ENABLED` | `false` | Opt in to OTLP trace export |
+| `RETRY_MAX_ATTEMPTS` | `3` | Total attempts, including the first |
+| `RETRY_BASE_DELAY` | `0.5` | Initial retry delay in seconds |
+| `RETRY_MAX_DELAY` | `60.0` | Maximum retry delay in seconds |
+| `MAX_TOOL_ROUNDS` | `4` | Maximum model/tool cycles per request |
+| `OTEL_ENABLED` | `false` | Opt in to trace export |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | `http://localhost:4317` | OTLP/gRPC endpoint |
+| `API_KEY` | — | Protects local FastAPI model endpoints |
+| `OLLAMA_BASE_URL` | `http://localhost:11434/v1` | Local OpenAI-compatible endpoint |
+| `LOG_LEVEL` | `INFO` | Operational log level |
+
+`config.py` is the authority for defaults and validation.
 
 Use a pinned model ID for repeatable evaluation runs; `latest` aliases are convenient
 for exploration but can change behavior over time.
