@@ -38,6 +38,10 @@ In-flight and backlog items for this repo.
 
 ## Done
 
+- [x] Updated filelock to 4.2.1 on the repaired dependency baseline in PR #18. Locked installation, package consistency, Ruff, 64 tests, six deterministic evals, strict installed-dependency audit and a CacheControl concurrent file-cache/lock smoke check passed. The changed SoftReadWriteLock protocol is not used by this dependency path.
+
+- [x] Combined the compatible OpenTelemetry 1.45.1 and Pillow 13/Streamlit 1.66.1 updates from PRs #16 and #17 with certifi 2026.10.19 to resolve the coupled dependency-audit findings. Locked installation, compile, Ruff, 64 tests, six deterministic evals, package consistency, in-memory telemetry and strict runtime audit passed; review and merge evidence remain in PR #17.
+
 - [x] Consolidated guide ownership and configuration, corrected current repository links and separated preview from verification. Local link checks, Ruff, 64 tests and six deterministic evaluation cases passed; PR records the reviewed revision.
 
 - [x] Refreshed the reviewed immutable AI SDLC Skill v0.5.2 source pin to `06581dab44162674234f2150a6e7120cc3f17eb7`; the canonical skill bundle is unchanged, and verification is recorded in pull request #14.
