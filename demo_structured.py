@@ -60,7 +60,7 @@ def run_structured_demo() -> None:
     )
 
     raw = response.choices[0].message.content
-    log.debug("Raw response: %s", raw)
+    log.debug("Structured response received: content_type=%s", type(raw).__name__)
 
     try:
         review = MovieReview(**json.loads(raw))
@@ -68,8 +68,8 @@ def run_structured_demo() -> None:
         print(f"Sentiment: {review.sentiment}")
         print(f"Score:     {review.score}/10")
         print(f"Summary:   {review.summary}\n")
-    except (ValidationError, json.JSONDecodeError) as exc:
-        log.error("Failed to parse structured response: %s\nRaw: %s", exc, raw)
+    except (ValidationError, json.JSONDecodeError, TypeError) as exc:
+        log.error("Failed to parse structured response: error_type=%s", type(exc).__name__)
 
 
 if __name__ == "__main__":

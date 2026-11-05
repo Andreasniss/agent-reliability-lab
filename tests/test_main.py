@@ -347,6 +347,55 @@ def test_tool_logs_exclude_argument_and_result_values(caplog):
     assert secret_result not in captured
 
 
+@pytest.mark.parametrize("scenario", ["unknown_name", "unexpected_key", "accepted_unknown_name"])
+def test_tool_logs_exclude_untrusted_names_and_argument_keys(caplog, scenario):
+    import json
+    import logging
+
+    marker = "SYNTHETIC_MODEL_METADATA_CONTENT_9f2b"
+    name = "lookup" if scenario == "unexpected_key" else marker
+    args = {marker: "value"} if scenario == "unexpected_key" else {"query": "safe"}
+    tool_call = MagicMock()
+    tool_call.id = "call-1"
+    tool_call.function.name = name
+    tool_call.function.arguments = json.dumps(args)
+    first = _make_response("")
+    first.choices[0].finish_reason = "tool_calls"
+    first.choices[0].message.tool_calls = [tool_call]
+    second = _make_response("done")
+    second.choices[0].finish_reason = "stop"
+    calls = []
+
+    def lookup(query):
+        return query
+
+    def executor(returned_name, arguments):
+        calls.append((returned_name, arguments))
+        if scenario == "accepted_unknown_name":
+            return "result"
+        if returned_name != "lookup":
+            raise ValueError(f"Unknown tool: {returned_name}")
+        return lookup(**arguments)
+
+    with patch("llm_client.get_client") as mock_get_client:
+        mock_get_client.return_value.chat.complete.side_effect = [first, second]
+        from llm_client import chat_with_tools
+        with caplog.at_level(logging.INFO, logger="llm_client"):
+            if scenario == "accepted_unknown_name":
+                assert chat_with_tools("hello", [{"function": {"name": "lookup"}}], executor) == "done"
+            else:
+                expected_error = TypeError if scenario == "unexpected_key" else ValueError
+                with pytest.raises(expected_error):
+                    chat_with_tools("hello", [{"function": {"name": "lookup"}}], executor)
+
+    assert calls == [(name, args)]
+    assert marker not in caplog.text
+    assert "argument_count=1" in caplog.text
+    assert all(record.exc_info is None for record in caplog.records if record.name == "llm_client")
+    if scenario == "accepted_unknown_name":
+        assert "returned result_chars=6" in caplog.text
+
+
 def test_tool_loop_is_bounded(monkeypatch):
     tool_call = MagicMock()
     tool_call.id = "call-1"
