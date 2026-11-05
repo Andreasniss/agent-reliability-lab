@@ -346,11 +346,12 @@ def chat_with_tools(
         messages.extend(conversation_history)
     messages.append({"role": "user", "content": user_message})
 
+    declared_tool_names = [t["function"]["name"] for t in tools]
     logger.info(
         "[%s] Tool-call request — model=%s tools=%s input_chars=%d",
         trace_id,
         resolved_model,
-        [t["function"]["name"] for t in tools],
+        declared_tool_names,
         len(user_message),
     )
 
@@ -426,17 +427,24 @@ def chat_with_tools(
                     args = json.loads(tc.function.arguments)
                     if not isinstance(args, dict):
                         raise ValueError("Tool arguments must decode to a JSON object")
+                    # Returned names and key strings are model output, including
+                    # when the executor later rejects them. Log only known names
+                    # from the application's declarations and numeric counts.
+                    logged_tool_name = next(
+                        (name for name in declared_tool_names if name == tc.function.name),
+                        "<unknown>",
+                    )
                     logger.info(
-                        "[%s] Calling tool %r with argument_keys=%s",
+                        "[%s] Calling tool %r with argument_count=%d",
                         trace_id,
-                        tc.function.name,
-                        sorted(args),
+                        logged_tool_name,
+                        len(args),
                     )
                     result = tool_executor(tc.function.name, args)
                     logger.info(
                         "[%s] Tool %r returned result_chars=%d",
                         trace_id,
-                        tc.function.name,
+                        logged_tool_name,
                         len(str(result)),
                     )
                     messages.append({

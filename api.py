@@ -72,10 +72,10 @@ def chat(req: ChatRequest, _: str = Depends(_verify_api_key)):
     """
     try:
         reply = llm_client.chat(req.message, system_message=req.system)
+        return ChatResponse(reply=reply, model=config.MISTRAL_MODEL)
     except Exception as exc:
-        logger.error("POST /chat failed: %s", exc)
+        logger.error("POST /chat failed: error_type=%s", type(exc).__name__)
         raise HTTPException(status_code=502, detail="Mistral API error — check logs for details")
-    return ChatResponse(reply=reply, model=config.MISTRAL_MODEL)
 
 
 @app.post("/summarize", response_model=SummarizeResponse, summary="Summarise text using the built-in prompt template")
@@ -89,7 +89,7 @@ def summarize(req: SummarizeRequest, _: str = Depends(_verify_api_key)):
     prompt = template.replace("{{TEXT}}", req.text)
     try:
         summary = llm_client.chat(prompt)
+        return SummarizeResponse(summary=summary, model=config.MISTRAL_MODEL)
     except Exception as exc:
-        logger.error("POST /summarize failed: %s", exc)
+        logger.error("POST /summarize failed: error_type=%s", type(exc).__name__)
         raise HTTPException(status_code=502, detail="Mistral API error — check logs for details")
-    return SummarizeResponse(summary=summary, model=config.MISTRAL_MODEL)

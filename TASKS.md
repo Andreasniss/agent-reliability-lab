@@ -39,6 +39,8 @@ In-flight and backlog items for this repo.
 
 ## Done
 
+- [x] Kept provider errors, response-validation details, structured-demo responses and untrusted model tool names/keys out of logs while preserving API errors and tool execution. Local verification: application and privacy tests, Ruff, six deterministic cases and the strict locked runtime dependency audit passed; PR owns exact counts, independent review and publication evidence.
+
 - [x] Simplified README entry path and linked technical detail; local links, Ruff, 64 tests and six deterministic cases passed. Corrected the schema-enforcement claim after source review. Mobile review was source-only; PR owns publication evidence.
 
 - [x] Updated filelock to 4.2.1 on the repaired dependency baseline in PR #18. Locked installation, package consistency, Ruff, 64 tests, six deterministic evals, strict installed-dependency audit and a CacheControl concurrent file-cache/lock smoke check passed. The changed SoftReadWriteLock protocol is not used by this dependency path.
