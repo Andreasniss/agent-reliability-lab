@@ -39,6 +39,8 @@ In-flight and backlog items for this repo.
 
 ## Done
 
+- [x] Added weekly/manual runs of existing credential-free CI and the strict runtime audit, plus weekly uv/Actions dependency-update proposals. Preserved the test job and privacy checks; local 82 application tests, 38 privacy tests, six deterministic cases, Ruff and runtime audit passed. PR owns review and activation evidence.
+
 - [x] Kept provider errors, response-validation details, structured-demo responses and untrusted model tool names/keys out of logs while preserving API errors and tool execution. Local verification: application and privacy tests, Ruff, six deterministic cases and the strict locked runtime dependency audit passed; PR owns exact counts, independent review and publication evidence.
 
 - [x] Simplified README entry path and linked technical detail; local links, Ruff, 64 tests and six deterministic cases passed. Corrected the schema-enforcement claim after source review. Mobile review was source-only; PR owns publication evidence.
