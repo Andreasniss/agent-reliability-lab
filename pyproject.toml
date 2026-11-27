@@ -14,7 +14,7 @@ dependencies = [
   "opentelemetry-instrumentation>=0.60.0",
   "opentelemetry-instrumentation-requests>=0.60.0",
   "opentelemetry-sdk>=1.39.0",
-  "python-dotenv>=1.0.0",
+  "python-dotenv>=1.2.4",
   "streamlit>=1.30.0",
   "uvicorn>=0.30.0",
 ]
