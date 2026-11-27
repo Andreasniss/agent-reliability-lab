@@ -6,6 +6,11 @@ This is an engineering learning reference, not a production service or a model-q
 
 ## Try the credential-free preview
 
+- **How many vacation days do employees receive?** The preview looks up the fictional policy and cites its *Vacation and Leave Policy* section. Full-time employees receive 25 paid vacation days per calendar year.
+- **What is the weather in Munich?** The preview recognizes a weather request and explains that live observations are unavailable offline.
+
+Both examples run without a model call. [Inspect the evaluation cases](evals/cases.json) or run them in the app.
+
 Use Git, Python 3.12 or later, and [uv](https://docs.astral.sh/uv/getting-started/installation/).
 
 ```sh
@@ -15,13 +20,7 @@ uv sync --locked --dev
 uv run streamlit run demo_streamlit.py
 ```
 
-With no provider key configured, open [localhost:8501](http://localhost:8501). Confirm the **Credential-free preview** label.
-
-1. Select **How many vacation days do employees receive?** Expect a summary citing the fictional policy, a named tool and **No provider call**.
-2. Select **What is the weather in Munich?** Expect an explanation that live weather is disabled in preview.
-3. Use **Clear conversation** in the sidebar to start again.
-
-Preview mode makes no model or live-weather call. No local runtime? Inspect the [UI tests](tests/test_streamlit_app.py) and [evaluation cases](evals/cases.json).
+With no provider key configured, open [localhost:8501](http://localhost:8501). Confirm the **Credential-free preview** label and select either sample question. The response shows the route, tool and **No provider call**. Use **Clear conversation** in the sidebar to start again. [See the UI tests](tests/test_streamlit_app.py).
 
 ## What to inspect
 
@@ -29,7 +28,7 @@ Preview mode makes no model or live-weather call. No local runtime? Inspect the 
 - **Grounding:** answers cite a small, fictional policy document.
 - **Failure handling:** retries are bounded; logs contain operational metadata rather than prompts, responses or tool content.
 
-The [technical guide](GUIDE.md) links each control to its implementation. The [project walkthrough](https://andreasnissen.dev/projects/mistral-playground/) explains the reviewer path; its URL retains the former project name.
+Trace each control to its implementation in the [technical guide](GUIDE.md), or explore the design in the [project walkthrough](https://andreasnissen.dev/projects/agent-reliability-lab/).
 
 ## Connected mode
 
