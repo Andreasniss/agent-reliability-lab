@@ -439,3 +439,46 @@ def test_load_prompt_raises_on_missing(tmp_path, monkeypatch):
 
     with pytest.raises(FileNotFoundError):
         prompts_loader.load_prompt("nonexistent.txt")
+
+
+@pytest.mark.parametrize("backend", ["api", "local"])
+@pytest.mark.parametrize("ending,expected,status", [
+    ("success", 90, "complete"), ("missing", 60, "partial"), ("partial", 60, "partial"), ("failure", 60, "partial"),
+])
+def test_tool_task_accounting(backend, ending, expected, status, monkeypatch):
+    import llm_client
+
+    monkeypatch.setattr(llm_client.config, "LLM_BACKEND", backend)
+    first = _make_response("")
+    first.choices[0].finish_reason = "tool_calls"
+    tool = MagicMock()
+    tool.function.name = "lookup"
+    tool.function.arguments = "{}"
+    first.choices[0].message.tool_calls = [tool]
+    final = _make_response("done")
+    final.choices[0].finish_reason = "stop"
+    if ending == "missing":
+        final.usage = None
+    if ending == "partial":
+        from mistralai.client.models import UsageInfo
+        final.usage = UsageInfo(prompt_tokens=0)
+
+    with patch("llm_client.get_client") as client, patch("llm_client.trace.get_tracer") as tracer:
+        chat = client.return_value.chat
+        call = chat.complete if backend == "api" else chat.completions.create
+        call.side_effect = [first, first, RuntimeError("fixture") if ending == "failure" else final]
+        args = ("question", [{"function": {"name": "lookup"}}], lambda name, args: "result")
+        if ending == "failure":
+            with pytest.raises(RuntimeError):
+                llm_client.chat_with_tools(*args)
+        else:
+            assert llm_client.chat_with_tools(*args) == "done"
+        span = tracer.return_value.start_as_current_span.return_value.__enter__.return_value
+        attrs = dict(c.args for c in span.set_attribute.call_args_list)
+        assert attrs["observed_total_tokens"] == expected
+        assert attrs["provider_attempts"] == 3
+        assert attrs["tool_batches"] == attrs["tool_calls_started"] == 2
+        assert attrs["usage_status"] == status
+        if ending == "partial":
+            assert attrs["prompt_tokens"] == 0
+            assert "total_tokens" not in attrs

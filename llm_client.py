@@ -390,9 +390,34 @@ def chat_with_tools(
         if resolved_top_p is not None:
             span.set_attribute("top_p", resolved_top_p)
 
+        provider_attempts = tool_batches = tool_calls_started = complete_responses = 0
+        observed = {}
+        fields = ("prompt_tokens", "completion_tokens", "total_tokens")
+
+        def reported_counts(response):
+            usage = getattr(response, "usage", None)
+            supplied = getattr(usage, "model_fields_set", None)
+            return {
+                key: count for key in fields
+                if (not isinstance(supplied, set) or key in supplied)
+                and isinstance(count := getattr(usage, key, None), int)
+            }
+
+        def call_and_observe():
+            nonlocal provider_attempts, complete_responses
+            provider_attempts += 1
+            response = _call(messages)
+            counts = reported_counts(response)
+            for key, count in counts.items():
+                observed[key] = observed.get(key, 0) + count
+            if len(counts) == len(fields):
+                complete_responses += 1
+            return response
+
         start = time.perf_counter()
+        task_completed = False
         try:
-            response = _call_with_retry(lambda: _call(messages), trace_id)
+            response = _call_with_retry(call_and_observe, trace_id)
 
             # Tool-call loop — bounded so a model cannot recurse indefinitely.
             tool_rounds = 0
@@ -402,6 +427,7 @@ def chat_with_tools(
                     raise RuntimeError(
                         f"Tool-call limit exceeded ({config.MAX_TOOL_ROUNDS} rounds)"
                     )
+                tool_batches += 1
                 tool_calls = response.choices[0].message.tool_calls
                 logger.info("[%s] Model requested %d tool call(s)", trace_id, len(tool_calls))
 
@@ -440,6 +466,7 @@ def chat_with_tools(
                         logged_tool_name,
                         len(args),
                     )
+                    tool_calls_started += 1
                     result = tool_executor(tc.function.name, args)
                     logger.info(
                         "[%s] Tool %r returned result_chars=%d",
@@ -454,8 +481,9 @@ def chat_with_tools(
                         "content": result,
                     })
 
-                response = _call_with_retry(lambda: _call(messages), trace_id)
+                response = _call_with_retry(call_and_observe, trace_id)
 
+            task_completed = True
         except Exception as exc:
             elapsed = time.perf_counter() - start
             span.set_attribute("error.type", type(exc).__name__)
@@ -468,23 +496,26 @@ def chat_with_tools(
             )
             raise
 
+        finally:
+            status = "unknown" if not observed else "partial"
+            if provider_attempts and complete_responses == provider_attempts and task_completed:
+                status = "complete"
+            metadata = {
+                "provider_attempts": provider_attempts, "tool_batches": tool_batches,
+                "tool_calls_started": tool_calls_started, "usage_status": status,
+                **{f"observed_{key}": value for key, value in observed.items()},
+            }
+            for key, value in metadata.items():
+                span.set_attribute(key, value)
+            logger.info("[%s] Tool-task accounting %s", trace_id, metadata)
+
         elapsed = time.perf_counter() - start
-        usage = response.usage
         content = response.choices[0].message.content
         span.set_attribute("latency_seconds", elapsed)
-        span.set_attribute("prompt_tokens", usage.prompt_tokens)
-        span.set_attribute("completion_tokens", usage.completion_tokens)
-        span.set_attribute("total_tokens", usage.total_tokens)
+        final_counts = reported_counts(response)
+        for key, count in final_counts.items():
+            span.set_attribute(key, count)
         span.set_attribute("output_chars", len(content or ""))
-
-        logger.info(
-            "[%s] Tool-call response — latency=%.2fs prompt_tokens=%s completion_tokens=%s total_tokens=%s output_chars=%d",
-            trace_id,
-            elapsed,
-            usage.prompt_tokens,
-            usage.completion_tokens,
-            usage.total_tokens,
-            len(content or ""),
-        )
-
+        logger.info("[%s] Tool-call response — latency=%.2fs final_usage=%s output_chars=%d",
+                    trace_id, elapsed, final_counts, len(content or ""))
         return content

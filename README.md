@@ -26,6 +26,7 @@ With no provider key configured, open [localhost:8501](http://localhost:8501). C
 
 - **Tool control:** tools have declared argument schemas; the application allows only named tool functions.
 - **Grounding:** answers cite a small, fictional policy document.
+- **Tool-task usage:** logs and spans count provider attempts (including retries), tool batches and executor calls started. Observed token sums include every reported field. Missing usage or interrupted work is marked partial, or unknown when nothing was reported. Final-response span fields retain their original meaning.
 - **Failure handling:** retries are bounded; logs contain operational metadata rather than prompts, responses or tool content.
 
 Trace each control to its implementation in the [technical guide](GUIDE.md), or explore the design in the [project walkthrough](https://andreasnissen.dev/projects/agent-reliability-lab/).
