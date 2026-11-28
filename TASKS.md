@@ -38,6 +38,7 @@ In-flight and backlog items for this repo.
 ---
 
 ## Done
+- [x] Account for observed tool-task usage (#19).
 
 - [x] Showed the fictional vacation-policy answer and offline weather behavior before README setup, and linked the current project walkthrough. Verified both preview responses, six deterministic cases and relative README links.
 
